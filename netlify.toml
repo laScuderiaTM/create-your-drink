@@ -1,0 +1,8 @@
+[build]
+  command = "npm run build"
+
+[build.environment]
+  # Variabilele NEXT_PUBLIC_* sunt publice prin design (ajung în browser).
+  # Cheia anon e sigură: datele sunt protejate de RLS în Supabase.
+  # Cheia service_role NU se pune niciodată aici sau în Netlify.
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY"
