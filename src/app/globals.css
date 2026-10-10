@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/* Culorile brandului – se schimbă aici când primim logo/culorile La Scuderia. */
+:root {
+  --bg: #12100e;
+  --surface: #1c1916;
+  --surface-2: #26221e;
+  --line: #3a342d;
+  --ink: #f4ede4;
+  --muted: #a89d8f;
+  --accent: #d9a441;
+  --accent-ink: #1a1408;
+  --danger: #e5604d;
+  --ok: #5fb87a;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-danger: var(--danger);
+  --color-ok: var(--ok);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-playfair);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+textarea,
+select {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  padding: 0.55rem 0.75rem;
+  color: var(--ink);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
