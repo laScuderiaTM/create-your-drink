@@ -2,39 +2,67 @@
 
 import Link from "next/link";
 import { LangSwitch } from "@/components/LangSwitch";
+import { Logo } from "@/components/Logo";
 import { useLang } from "@/lib/i18n";
 import { MENU_URL } from "@/lib/types";
 
 export function Home() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 py-6">
-      <div className="flex justify-end">
-        <LangSwitch />
-      </div>
-      <div className="flex flex-1 flex-col items-center justify-center gap-10 text-center">
-        <div>
-          <p className="text-xs uppercase tracking-[0.35em] text-muted">Bar · Café</p>
-          <h1 className="mt-2 font-display text-5xl text-accent">La Scuderia</h1>
-          <p className="mt-3 text-muted">{t.tagline}</p>
+    <>
+      <div className="checkered h-4 w-full" />
+      <main className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 py-6">
+        <div className="flex justify-end">
+          <LangSwitch />
         </div>
-        <div className="flex w-full flex-col gap-4">
-          <Link
-            href="/create"
-            className="rounded-2xl bg-accent px-6 py-5 text-lg font-semibold text-accent-ink shadow-lg shadow-accent/10 active:scale-[0.98] transition"
-          >
-            {t.createDrink}
-          </Link>
-          <a
-            href={MENU_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-2xl border border-line px-6 py-5 text-lg font-semibold active:scale-[0.98] transition"
-          >
-            {t.ourMenu}
-          </a>
+        <div className="flex flex-1 flex-col items-center justify-center gap-10 text-center">
+          <Logo size="lg" />
+          <div>
+            <Divider />
+            <h1 className="my-4 font-display text-5xl leading-tight">
+              {lang === "en" ? (
+                <>
+                  Create <em className="text-accent">your</em> <em className="text-accent">drink.</em>
+                </>
+              ) : (
+                <>
+                  Creează-ți <em className="text-accent">băutura</em> <em className="text-accent">ta.</em>
+                </>
+              )}
+            </h1>
+            <p className="text-muted">{t.tagline}</p>
+            <Divider />
+          </div>
+          <div className="flex w-full flex-col gap-4">
+            <Link
+              href="/create"
+              className="rounded-full bg-accent px-6 py-4 text-lg font-semibold text-accent-ink shadow-lg shadow-accent/20 transition active:scale-[0.98]"
+            >
+              {t.createDrink}
+            </Link>
+            <a
+              href={MENU_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full border-2 border-accent px-6 py-4 text-lg font-semibold text-accent transition active:scale-[0.98]"
+            >
+              {t.ourMenu}
+            </a>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+      <div className="checkered h-4 w-full" />
+      <div className="h-2 w-full bg-accent" />
+    </>
+  );
+}
+
+function Divider() {
+  return (
+    <div className="mx-auto flex max-w-[240px] items-center gap-3 text-accent">
+      <span className="h-px flex-1 bg-accent/60" />
+      <span className="text-[10px]">◆</span>
+      <span className="h-px flex-1 bg-accent/60" />
+    </div>
   );
 }

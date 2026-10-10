@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { LangSwitch } from "@/components/LangSwitch";
+import { Logo } from "@/components/Logo";
 import { pick, useLang } from "@/lib/i18n";
 import { supabase } from "@/lib/supabase";
 import { formatLei, type Category, type Option, type Step } from "@/lib/types";
@@ -163,8 +164,8 @@ export function Wizard({ table: tableFromUrl, kiosk }: { table: string; kiosk: b
 
   const header = (
     <header className="flex items-center justify-between">
-      <Link href="/" className="font-display text-xl text-accent">
-        La Scuderia
+      <Link href="/" aria-label="La Scuderia">
+        <Logo size="sm" />
       </Link>
       <LangSwitch />
     </header>
@@ -196,7 +197,7 @@ export function Wizard({ table: tableFromUrl, kiosk }: { table: string; kiosk: b
         <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
           <p className="text-lg">{t.thanks}</p>
           <p className="text-sm uppercase tracking-widest text-muted">{t.yourCode}</p>
-          <p className="font-display text-7xl text-accent">{phase.code}</p>
+          <p className="font-display text-7xl italic text-accent">{phase.code}</p>
           <p className="text-2xl font-semibold">{formatLei(phase.total)}</p>
           <p className="text-sm text-muted">{t.showCode}</p>
           <div className="mt-6 flex w-full flex-col gap-3">
@@ -418,7 +419,12 @@ async function fetchMenu() {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  return <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 py-5">{children}</main>;
+  return (
+    <>
+      <div className="checkered h-3 w-full" />
+      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 py-5">{children}</main>
+    </>
+  );
 }
 
 function OptionLabel({ o, lang, soldOut }: { o: Option; lang: "ro" | "en"; soldOut: string }) {

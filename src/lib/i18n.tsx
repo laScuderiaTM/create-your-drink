@@ -6,7 +6,7 @@ export type Lang = "ro" | "en";
 
 const dict = {
   ro: {
-    tagline: "Băutura ta, exact cum o vrei.",
+    tagline: "Alegi baza, aromele și extra-urile. Noi o pregătim.",
     createDrink: "Creează-ți băutura",
     ourMenu: "Meniul nostru",
     chooseType: "Alege tipul băuturii",
@@ -38,7 +38,7 @@ const dict = {
     priceNote: "Prețul final este confirmat la bar.",
   },
   en: {
-    tagline: "Your drink, exactly how you like it.",
+    tagline: "Pick the base, flavours and extras. We mix it for you.",
     createDrink: "Create your drink",
     ourMenu: "Our menu",
     chooseType: "Choose your drink type",
