@@ -44,4 +44,4 @@ Câte un QR pentru fiecare masă, cu link de forma `https://<domeniu>/create?mas
 
 ## Branding
 
-Culorile sunt definite în `src/app/globals.css` (`:root`). Fonturile se setează în `src/app/layout.tsx`. Când primim logo-ul, îl punem în `public/` și îl afișăm în `src/components/Home.tsx`.
+Culorile sunt definite în `src/app/globals.css` (`:root`). Fonturile se setează în `src/app/layout.tsx`. Logo-urile originale sunt în `public/logo_fundal_alb.png` și `public/logo_fundal_negru.png`; site-ul folosește `public/logo.png` (varianta pe negru, decupată și cu fundal transparent), prin `src/components/Logo.tsx`. Favicon-ul e în `src/app/favicon.ico` și `src/app/apple-icon.png`.
