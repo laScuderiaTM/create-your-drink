@@ -1,0 +1,26 @@
+# Ține proiectul Supabase activ: planul gratuit îl pune pe pauză după 7 zile fără activitate.
+# Face un SELECT real (tabela categories are politică de citire publică).
+name: Supabase keepalive
+
+on:
+  schedule:
+    - cron: "0 9 */3 * *" # la 3 zile, 09:00 UTC
+  workflow_dispatch: # rulare manuală din tab-ul Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "Lipsesc secretele SUPABASE_URL / SUPABASE_ANON_KEY" >&2
+            exit 1
+          fi
+          curl --fail-with-body -sS \
+            "$SUPABASE_URL/rest/v1/categories?select=id&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY"
