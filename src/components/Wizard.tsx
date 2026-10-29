@@ -199,7 +199,8 @@ export function Wizard({ table: tableFromUrl, kiosk }: { table: string; kiosk: b
           <p className="text-sm uppercase tracking-widest text-muted">{t.yourCode}</p>
           <p className="font-display text-7xl italic text-accent">{phase.code}</p>
           <p className="text-2xl font-semibold">{formatLei(phase.total)}</p>
-          <p className="text-sm text-muted">{t.showCode}</p>
+          <p className="mt-2 rounded-2xl border border-accent bg-accent/10 px-5 py-4 text-lg font-semibold">{t.payNow}</p>
+          <p className="text-sm text-muted">{t.payNote}</p>
           <div className="mt-6 flex w-full flex-col gap-3">
             <button onClick={reset} className="rounded-2xl bg-accent py-4 font-semibold text-accent-ink">
               {t.newDrink}

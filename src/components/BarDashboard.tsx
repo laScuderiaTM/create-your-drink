@@ -5,17 +5,20 @@ import { SignOut } from "@/components/StaffGate";
 import { supabase } from "@/lib/supabase";
 import { formatLei, type Order, type OrderStatus } from "@/lib/types";
 
-const COLUMNS: { status: OrderStatus; title: string }[] = [
-  { status: "new", title: "Noi" },
-  { status: "preparing", title: "În preparare" },
-  { status: "ready", title: "Gata" },
+const COLUMNS: { statuses: OrderStatus[]; title: string }[] = [
+  { statuses: ["awaiting_payment"], title: "De plătit" },
+  { statuses: ["new", "preparing"], title: "În preparare" },
+  { statuses: ["ready"], title: "Gata" },
 ];
 
 const NEXT: Partial<Record<OrderStatus, { to: OrderStatus; label: string }>> = {
+  awaiting_payment: { to: "preparing", label: "Încasat" },
   new: { to: "preparing", label: "Încep" },
   preparing: { to: "ready", label: "E gata" },
-  ready: { to: "in_pos", label: "Trecut în POS" },
+  ready: { to: "in_pos", label: "Predat" },
 };
+
+const UNPAID_EXPIRY_MS = 25 * 60_000; // la fel ca în orders_before_insert()
 
 function startOfToday() {
   const d = new Date();
@@ -47,6 +50,7 @@ export function BarDashboard() {
   }, []);
 
   const load = useCallback(async () => {
+    await expireUnpaid();
     const list = await fetchToday();
     if (!list) return;
     const isFirstLoad = known.current.size === 0;
@@ -83,7 +87,8 @@ export function BarDashboard() {
   }
 
   const done = orders.filter((o) => o.status === "in_pos" || o.status === "cancelled").reverse();
-  const todayTotal = orders.filter((o) => o.status !== "cancelled").reduce((s, o) => s + Number(o.total), 0);
+  const paid = orders.filter((o) => o.status !== "cancelled" && o.status !== "awaiting_payment");
+  const todayTotal = paid.reduce((s, o) => s + Number(o.total), 0);
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4">
@@ -94,7 +99,7 @@ export function BarDashboard() {
         </div>
         <div className="flex items-center gap-4 text-sm">
           <span className="text-muted">
-            Azi: {orders.length} comenzi · {formatLei(todayTotal)}
+            Azi: {paid.length} comenzi plătite · {formatLei(todayTotal)}
           </span>
           {!soundOn && (
             <button onClick={enableSound} className="rounded-lg bg-accent px-3 py-2 font-semibold text-accent-ink">
@@ -110,9 +115,9 @@ export function BarDashboard() {
 
       <div className="grid flex-1 gap-4 md:grid-cols-3">
         {COLUMNS.map((col) => {
-          const list = orders.filter((o) => o.status === col.status);
+          const list = orders.filter((o) => col.statuses.includes(o.status));
           return (
-            <section key={col.status} className="flex flex-col gap-3 rounded-2xl bg-surface p-3">
+            <section key={col.title} className="flex flex-col gap-3 rounded-2xl bg-surface p-3">
               <h2 className="px-1 font-semibold">
                 {col.title} <span className="text-muted">({list.length})</span>
               </h2>
@@ -138,6 +143,16 @@ export function BarDashboard() {
   );
 }
 
+// Anulează comenzile neplătite mai vechi de 25 de minute (și create_order face asta, dar
+// fără comenzi noi ar rămâne în coloana „De plătit”).
+async function expireUnpaid() {
+  await supabase()
+    .from("orders")
+    .update({ status: "cancelled" })
+    .eq("status", "awaiting_payment")
+    .lt("created_at", new Date(Date.now() - UNPAID_EXPIRY_MS).toISOString());
+}
+
 async function fetchToday() {
   const { data } = await supabase()
     .from("orders")
@@ -153,7 +168,7 @@ function OrderCard({ o, onStatus }: { o: Order; onStatus: (o: Order, s: OrderSta
   return (
     <article
       className={`rounded-xl border p-3 ${
-        o.status === "new" ? "border-accent bg-accent/10" : "border-line bg-surface-2"
+        o.status === "awaiting_payment" || o.status === "new" ? "border-accent bg-accent/10" : "border-line bg-surface-2"
       } ${o.status === "cancelled" ? "opacity-50" : ""}`}
     >
       <div className="flex items-start justify-between gap-2">
@@ -200,8 +215,11 @@ function OrderCard({ o, onStatus }: { o: Order; onStatus: (o: Order, s: OrderSta
           </button>
         )}
         {(o.status === "in_pos" || o.status === "cancelled") && (
-          <button onClick={() => onStatus(o, "ready")} className="rounded-lg border border-line px-3 py-2.5 text-sm text-muted">
-            Readu în listă
+          <button
+            onClick={() => onStatus(o, o.status === "cancelled" ? "preparing" : "ready")}
+            className="rounded-lg border border-line px-3 py-2.5 text-sm text-muted"
+          >
+            {o.status === "cancelled" ? "Încasat, prepară" : "Readu în listă"}
           </button>
         )}
       </div>

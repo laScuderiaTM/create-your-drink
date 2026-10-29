@@ -43,7 +43,8 @@ export type OrderItem = {
   line_total: number;
 };
 
-export type OrderStatus = "new" | "preparing" | "ready" | "in_pos" | "cancelled";
+// „new” rămâne doar pentru comenzile dinainte de plata în avans; „in_pos” = predată.
+export type OrderStatus = "awaiting_payment" | "new" | "preparing" | "ready" | "in_pos" | "cancelled";
 
 export type Order = {
   id: string;

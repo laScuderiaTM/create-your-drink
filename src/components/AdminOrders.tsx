@@ -5,10 +5,11 @@ import { supabase } from "@/lib/supabase";
 import { formatLei, type Order } from "@/lib/types";
 
 const STATUS_LABEL: Record<string, string> = {
+  awaiting_payment: "Neplătită",
   new: "Nouă",
   preparing: "În preparare",
   ready: "Gata",
-  in_pos: "În POS",
+  in_pos: "Predată",
   cancelled: "Anulată",
 };
 
@@ -35,7 +36,7 @@ export function AdminOrders() {
       .then(({ data }) => setOrders((data ?? []) as Order[]));
   }, [day]);
 
-  const valid = orders.filter((o) => o.status !== "cancelled");
+  const valid = orders.filter((o) => o.status !== "cancelled" && o.status !== "awaiting_payment");
   const total = valid.reduce((s, o) => s + Number(o.total), 0);
 
   const counts = new Map<string, number>();
